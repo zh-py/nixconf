@@ -22,8 +22,10 @@ in {
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = with pkgs; [
+    htop
+    glances
+    bottom
     aria
-    vim
     alacritty
     thefuck
     nerdfonts
@@ -40,8 +42,20 @@ in {
     # (pkgs.writeShellScriptBin "my-hello" ''
     #   echo "Hello, ${config.home.username}!"
     # '')
+    (python311.withPackages (p:
+      with p; [
+        numpy
+        requests
+        ipdb
+        pudb
+        pysnooper
+      ]))
   ];
-
+  #pkgs.python311.withPackages
+  #(p:
+  #with p; [
+  #numpy
+  #])
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
   # plain files is through 'home.file'.
   home.file = {
@@ -78,46 +92,16 @@ in {
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
+
   nixpkgs.config = {
     allowUnfree = true;
     allowUnfreePredicate = _: true;
   };
-  programs.git = {
-    enable=true;
-    userEmail="pierrez1984@gmail.com";
-    userName="zheng-py";
-  };
 
-  programs.neovim = {
+  programs.git = {
     enable = true;
-    extraConfig = ''
-      colorscheme gruvbox
-      syntax enable
-             set mouse=a
-             set number
-             set wrap
-             set linebreak
-             set clipboard=unnamed
-             set nu rnu
-             let g:context_nvim_no_redraw = 1
-             let &scrolloff = 5
-             let g:context_enabled = 0
-             lua require'nvim-lastplace'.setup{}
-    '';
-    plugins = with pkgs.vimPlugins; let
-    in [
-      nvim-lastplace
-      nvim-surround
-      gruvbox
-      formatter-nvim
-      fzf-vim
-      context-vim
-      vim-airline
-      vim-nix
-      nerdcommenter
-    ];
-    viAlias = true;
-    withPython3 = true;
+    userEmail = "pierrez1984@gmail.com";
+    userName = "zh-py";
   };
 
   programs.zsh = {
@@ -126,6 +110,8 @@ in {
     enableCompletion = true;
     shellAliases = {
       ll = "ls -l";
+      bl = "sudo python3 ~/Downloads/osx_battery_charge_limit/main.py -s 42";
+      bh = "sudo python3 ~/Downloads/osx_battery_charge_limit/main.py -s 77";
     };
     oh-my-zsh = {
       enable = true;
@@ -139,9 +125,105 @@ in {
         "sudo"
         "terraform"
         "systemadmin"
-        "vi-mode"
       ];
     };
+  };
+
+  programs.neovim = {
+    enable = true;
+    defaultEditor = true;
+    viAlias = true;
+    withPython3 = true;
+    extraConfig = ''
+      colorscheme gruvbox
+      syntax enable
+      set mouse=a
+      set number
+      set wrap
+      set linebreak
+      set clipboard=unnamed
+      set nu rnu
+      let g:context_nvim_no_redraw = 1
+      let &scrolloff = 5
+      let g:context_enabled = 0
+      lua require'nvim-lastplace'.setup{}
+      lua require'nvim-surround'.setup{}
+      autocmd FileType python map <buffer> <F5> :w<CR>:exec 'term python3 %' shellescape(@%, 1)<CR>
+      autocmd FileType python imap <buffer> <F5> <esc>:w<CR>:exec 'term python3 %' shellescape(@%, 1)<CR>
+      au FileType python map <silent> <leader>b ofrom pudb import set_trace; set_trace()<esc>
+      au FileType python map <silent> <leader>B Ofrom pudb import set_trace; set_trace()<esc>
+    '';
+    plugins = with pkgs.vimPlugins; let
+    in [
+      mini-nvim
+      nvim-lastplace
+      nvim-surround
+      gruvbox
+      formatter-nvim
+      fzf-vim
+      context-vim
+      vim-nix
+      nerdcommenter
+      nvim-lspconfig
+      mason-lspconfig-nvim
+      mason-nvim
+      {
+        plugin = nvim-web-devicons;
+        type = "lua";
+        config = ''
+          require("nvim-web-devicons").setup{}
+        '';
+      }
+      markdown-preview-nvim
+      {
+        plugin = telescope-nvim;
+        type = "lua";
+        config = ''
+          local builtin = require('telescope.builtin')
+          vim.keymap.set('n', '<leader>ff', builtin.find_files, {})
+          vim.keymap.set('n', '<leader>fg', builtin.live_grep, {})
+          vim.keymap.set('n', '<leader>fb', builtin.buffers, {})
+          vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
+          require("telescope").setup{}
+        '';
+      }
+      plenary-nvim
+      {
+        plugin = lualine-nvim;
+        type = "lua";
+        config = ''
+          local function metals_status()
+            return vim.g["metals_status"] or ""
+          end
+          require('lualine').setup(
+            {
+              options = {
+                theme = 'everforest',
+                icon_enabled = true,
+              },
+              sections = {
+                lualine_a = { 'mode' },
+                lualine_b = { 'branch', 'diff' },
+                lualine_c = { 'filename', metals_status },
+                lualine_x = {'encoding', 'filetype'},
+                lualine_y = {'progress'},
+                lualine_z = {'location'},
+              }
+            }
+          )
+        '';
+      }
+      {
+        plugin = nvim-treesitter.withAllGrammars;
+        type = "lua";
+        config = ''
+          require('nvim-treesitter.configs').setup {
+            highlight = { enable = true},
+            indent = { enable = true},
+          }
+        '';
+      }
+    ];
   };
 
   programs.alacritty = {
@@ -170,6 +252,11 @@ in {
       cursor = {
         style.shape = "Beam";
         style.blinking = "On";
+      };
+
+      scrolling = {
+        history = 10000;
+        multiplier = 3;
       };
 
       shell = {
