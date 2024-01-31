@@ -1,3 +1,5 @@
+# ln -s ~/Insync/pierrez1984@gmail.com/Dropbox/mac_config/home-manager ~/.config
+
 {
   config,
   pkgs,
