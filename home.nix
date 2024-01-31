@@ -23,12 +23,15 @@ in {
   # environment.
   home.packages = with pkgs; [
     htop
+    ripgrep
     glances
     bottom
     aria
     alacritty
     thefuck
     nerdfonts
+    rclone
+    syncthing
 
     # # It is sometimes useful to fine-tune packages, for example, by applying
     # # overrides. You can do that directly here, just don't forget the
@@ -42,6 +45,7 @@ in {
     # (pkgs.writeShellScriptBin "my-hello" ''
     #   echo "Hello, ${config.home.username}!"
     # '')
+
     (python311.withPackages (p:
       with p; [
         numpy
@@ -49,6 +53,7 @@ in {
         ipdb
         pudb
         pysnooper
+        pyside6
       ]))
   ];
   #pkgs.python311.withPackages
@@ -147,7 +152,6 @@ in {
       let &scrolloff = 5
       let g:context_enabled = 0
       lua require'nvim-lastplace'.setup{}
-      lua require'nvim-surround'.setup{}
       autocmd FileType python map <buffer> <F5> :w<CR>:exec 'term python3 %' shellescape(@%, 1)<CR>
       autocmd FileType python imap <buffer> <F5> <esc>:w<CR>:exec 'term python3 %' shellescape(@%, 1)<CR>
       au FileType python map <silent> <leader>b ofrom pudb import set_trace; set_trace()<esc>
@@ -155,18 +159,42 @@ in {
     '';
     plugins = with pkgs.vimPlugins; let
     in [
-      mini-nvim
       nvim-lastplace
-      nvim-surround
       gruvbox
       formatter-nvim
+      trouble-nvim
       fzf-vim
       context-vim
       vim-nix
       nerdcommenter
       nvim-lspconfig
       mason-lspconfig-nvim
-      mason-nvim
+      markdown-preview-nvim
+      plenary-nvim
+      {
+        plugin = mini-nvim;
+        type = "lua";
+        config = ''
+          require("mini.surround").setup{}
+          require('mini.trailspace').setup()
+        '';
+      }
+      {
+        plugin = harpoon2;
+        type = "lua";
+        config = ''
+          local harpoon = require("harpoon")
+          harpoon:setup()
+          vim.keymap.set("n", "<leader>a", function() harpoon:list():append() end)
+          vim.keymap.set("n", "<C-e>", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
+          vim.keymap.set("n", "<C-h>", function() harpoon:list():select(1) end)
+          vim.keymap.set("n", "<C-t>", function() harpoon:list():select(2) end)
+          vim.keymap.set("n", "<C-n>", function() harpoon:list():select(3) end)
+          vim.keymap.set("n", "<C-s>", function() harpoon:list():select(4) end)
+          vim.keymap.set("n", "<C-S-P>", function() harpoon:list():prev() end)
+          vim.keymap.set("n", "<C-S-N>", function() harpoon:list():next() end)
+        '';
+      }
       {
         plugin = nvim-web-devicons;
         type = "lua";
@@ -174,7 +202,6 @@ in {
           require("nvim-web-devicons").setup{}
         '';
       }
-      markdown-preview-nvim
       {
         plugin = telescope-nvim;
         type = "lua";
@@ -187,7 +214,6 @@ in {
           require("telescope").setup{}
         '';
       }
-      plenary-nvim
       {
         plugin = lualine-nvim;
         type = "lua";
