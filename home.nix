@@ -170,6 +170,14 @@ in {
       au FileType python map <silent> <leader>b ofrom pudb import set_trace; set_trace()<esc>
       au FileType python map <silent> <leader>B Ofrom pudb import set_trace; set_trace()<esc>
       lua vim.opt.signcolumn = "yes"
+      cnoremap <C-a> <Home>
+      cnoremap <C-e> <End>
+      cnoremap <C-p> <Up>
+      cnoremap <C-n> <Down>
+      cnoremap <C-b> <Left>
+      cnoremap <C-f> <Right>
+      cnoremap <M-b> <S-Left>
+      cnoremap <M-f> <S-Right>
     '';
     plugins = with pkgs.vimPlugins; [
       vim-visual-multi

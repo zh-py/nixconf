@@ -76,16 +76,19 @@ cmp.setup.filetype("gitcommit", {
 cmp.setup.cmdline({ "/", "?" }, {
 	mapping = cmp.mapping.preset.cmdline(),
 	sources = {
-		{ name = "buffer" },
+		{ name = "buffer", keyword_length = 2},
 	},
 })
 
 -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
 cmp.setup.cmdline(":", {
-	mapping = cmp.mapping.preset.cmdline(),
+	mapping = cmp.mapping.preset.cmdline{
+		['<C-n>'] = cmp.config.disable,
+		['<C-p>'] = cmp.config.disable,
+	},
 	sources = cmp.config.sources({
-		{ name = "path" },
+		{ name = "path", keyword_length = 2},
 	}, {
-		{ name = "cmdline" },
+		{ name = "cmdline", keyword_length = 2},
 	}),
 })
