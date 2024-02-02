@@ -176,8 +176,11 @@ in {
       cnoremap <C-n> <Down>
       cnoremap <C-b> <Left>
       cnoremap <C-f> <Right>
-      cnoremap <M-b> <S-Left>
-      cnoremap <M-f> <S-Right>
+      cnoremap <C-d> <Del>
+      cnoreabbrev <expr> tn getcmdtype() == ":" && getcmdline() == 'tn' ? 'tabnew' : 'tn'
+      cnoreabbrev <expr> th getcmdtype() == ":" && getcmdline() == 'th' ? 'tabp' : 'th'
+      cnoreabbrev <expr> tl getcmdtype() == ":" && getcmdline() == 'tl' ? 'tabn' : 'tl'
+      cnoreabbrev <expr> te getcmdtype() == ":" && getcmdline() == 'te' ? 'tabedit' : 'te'
     '';
     plugins = with pkgs.vimPlugins; [
       vim-visual-multi
