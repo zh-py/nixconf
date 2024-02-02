@@ -367,7 +367,6 @@ in {
       env = {
         "TERM" = "xterm-256color";
       };
-
       window = {
         #padding.x = 10;
         #padding.y = 10;
@@ -376,37 +375,31 @@ in {
         decorations = "buttonless";
         startup_mode = "Maximized";
       };
-
       font = {
         size = 16.0;
         normal.family = "FiraCode Nerd Font";
         bold.family = "FiraCode Nerd Font";
         italic.family = "FiraCode Nerd Font";
       };
-
       cursor = {
         style.shape = "Beam";
         style.blinking = "On";
       };
-
       scrolling = {
         history = 10000;
         multiplier = 3;
       };
-
       shell = {
         program = "zsh";
         args = [
           "-l"
         ];
       };
-
       colors = {
         primary = {
           background = "0x1b182c";
           foreground = "0xcbe3e7";
         };
-
         normal = {
           black = "0x100e23";
           red = "0xff8080";
@@ -417,7 +410,6 @@ in {
           cyan = "0xaaffe4";
           white = "0xcbe3e7";
         };
-
         bright = {
           black = "0x565575";
           red = "0xff5458";
