@@ -42,6 +42,7 @@ in {
     lua-language-server
     marksman
     tree-sitter
+    tree-sitter-grammars.tree-sitter-python
 
     # # It is sometimes useful to fine-tune packages, for example, by applying
     # # overrides. You can do that directly here, just don't forget the
@@ -64,6 +65,7 @@ in {
         pudb
         pysnooper
         pyside6
+        debugpy
       ]))
   ];
   #pkgs.python311.withPackages
@@ -169,7 +171,6 @@ in {
       autocmd Filetype lua setlocal shiftwidth=4
       au FileType python map <silent> <leader>b ofrom pudb import set_trace; set_trace()<esc>
       au FileType python map <silent> <leader>B Ofrom pudb import set_trace; set_trace()<esc>
-      lua vim.opt.signcolumn = "yes"
       cnoremap <C-a> <Home>
       cnoremap <C-e> <End>
       cnoremap <C-p> <Up>
@@ -181,6 +182,11 @@ in {
       cnoreabbrev <expr> th getcmdtype() == ":" && getcmdline() == 'th' ? 'tabp' : 'th'
       cnoreabbrev <expr> tl getcmdtype() == ":" && getcmdline() == 'tl' ? 'tabn' : 'tl'
       cnoreabbrev <expr> te getcmdtype() == ":" && getcmdline() == 'te' ? 'tabedit' : 'te'
+      lua vim.opt.signcolumn = "yes"
+      lua vim.keymap.set("n", "=", [[<cmd>vertical resize +5<cr>]])
+      lua vim.keymap.set("n", "-", [[<cmd>vertical resize -5<cr>]])
+      lua vim.keymap.set("n", "+", [[<cmd>horizontal resize +2<cr>]])
+      lua vim.keymap.set("n", "_", [[<cmd>horizontal resize -2<cr>]])
     '';
     plugins = with pkgs.vimPlugins; [
       vim-visual-multi
@@ -344,9 +350,9 @@ in {
         config = ''
           require('treesj').setup{
             lang = {
-              lua = require('treesj.langs.lua'),
-              typescript = require('treesj.langs.typescript'),
-              python = require('treesj.langs.python'),
+                lua = require('treesj.langs.lua'),
+                typescript = require('treesj.langs.typescript'),
+                python = require('treesj.langs.python'),
               },
             use_default_keymaps = true,
             check_syntax_error = true,
@@ -358,6 +364,16 @@ in {
             }
         '';
       }
+      nvim-dap
+      {
+        plugin = nvim-dap-python;
+        type = "lua";
+        config = builtins.readFile(./neovim/debuggerpy.lua);
+      }
+      telescope-dap-nvim
+      nvim-dap-ui
+      neodev-nvim
+      nvim-dap-virtual-text
     ];
   };
 
