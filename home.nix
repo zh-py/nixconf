@@ -1,5 +1,4 @@
-# ln -s ~/Insync/pierrez1984@gmail.com/Dropbox/mac_config/home-manager ~/.config
-
+#ln -s ~/Insync/pierrez1984@gmail.com/Dropbox/mac_config/home-manager ~/.config
 {
   config,
   pkgs,
@@ -34,6 +33,15 @@ in {
     nerdfonts
     rclone
     syncthing
+    nil
+    pyright
+    pylint
+    luajitPackages.luacheck
+    isort
+    black
+    lua-language-server
+    marksman
+    tree-sitter
 
     # # It is sometimes useful to fine-tune packages, for example, by applying
     # # overrides. You can do that directly here, just don't forget the
@@ -95,6 +103,7 @@ in {
   #
   home.sessionVariables = {
     # EDITOR = "vim";
+    XDG_CONFIG_HOME = "$HOME/.config";
   };
 
   # Let Home Manager install and manage itself.
@@ -153,31 +162,93 @@ in {
       let g:context_nvim_no_redraw = 1
       let &scrolloff = 5
       let g:context_enabled = 0
-      lua require'nvim-lastplace'.setup{}
+      filetype plugin indent on
       autocmd FileType python map <buffer> <F5> :w<CR>:exec 'term python3 %' shellescape(@%, 1)<CR>
       autocmd FileType python imap <buffer> <F5> <esc>:w<CR>:exec 'term python3 %' shellescape(@%, 1)<CR>
+      autocmd Filetype lua setlocal tabstop=4
+      autocmd Filetype lua setlocal shiftwidth=4
       au FileType python map <silent> <leader>b ofrom pudb import set_trace; set_trace()<esc>
       au FileType python map <silent> <leader>B Ofrom pudb import set_trace; set_trace()<esc>
+      lua vim.opt.signcolumn = "yes"
     '';
-    plugins = with pkgs.vimPlugins; let
-    in [
-      nvim-lastplace
+    plugins = with pkgs.vimPlugins; [
+      vim-visual-multi
       gruvbox
-      formatter-nvim
       trouble-nvim
       fzf-vim
       context-vim
       vim-nix
       nerdcommenter
-      nvim-lspconfig
-      mason-lspconfig-nvim
+      #{
+        #plugin = vimtex;
+        #config = /* vim */ ''
+          #let g:vimtex_mappings_enabled = 0
+          #let g:vimtex_imaps_enabled = 0
+          #let g:vimtex_view_method = 'zathura'
+          #let g:vimtex_compiler_latexmk = {'build_dir': '.tex'}
+          #nnoremap <localleader>f <plug>(vimtex-view)
+          #nnoremap <localleader>g <plug>(vimtex-compile)
+          #nnoremap <localleader>d <plug>(vimtex-env-delete)
+          #nnoremap <localleader>c <plug>(vimtex-env-change)
+        #'';
+      #}
       markdown-preview-nvim
+      {
+        plugin = vim-markdown;
+        config = /* vim */ ''
+          let g:vim_markdown_folding_disabled = 1
+          let g:vim_markdown_conceal = 0
+          let g:vim_markdown_frontmatter = 1
+          let g:vim_markdown_toml_frontmatter = 1
+          let g:vim_markdown_json_frontmatter = 1
+        '';
+      }
+      {
+        plugin = nvim-lastplace;
+        type = "lua";
+        config = ''
+          require('nvim-lastplace').setup()
+        '';
+      }
+      {
+        plugin = nvim-lspconfig;
+        type = "lua";
+        config = builtins.readFile(./neovim/lspconfig.lua);
+      }
+      {
+        plugin = nvim-lint;
+        type = "lua";
+        config = ''
+          require('lint').linters_by_ft = {
+            python = {'pylint'},
+            lua = {'luacheck'},
+          }
+          vim.api.nvim_create_autocmd({ "BufWritePost" }, {
+            callback = function()
+              require("lint").try_lint()
+            end,
+          })
+        '';
+      }
+      cmp-buffer
+      cmp-path
+      cmp-cmdline
+      cmp-nvim-lua
+      cmp-vsnip
+      vim-vsnip
+      friendly-snippets
+      cmp-nvim-lsp
+      {
+        plugin = nvim-cmp;
+        type = "lua";
+        config = builtins.readFile(./neovim/completion.lua);
+      }
       plenary-nvim
       {
         plugin = mini-nvim;
         type = "lua";
         config = ''
-          require("mini.surround").setup{}
+          require('mini.surround').setup()
           require('mini.trailspace').setup()
         '';
       }
@@ -201,7 +272,7 @@ in {
         plugin = nvim-web-devicons;
         type = "lua";
         config = ''
-          require("nvim-web-devicons").setup{}
+          require("nvim-web-devicons").setup()
         '';
       }
       {
@@ -245,10 +316,46 @@ in {
         plugin = nvim-treesitter.withAllGrammars;
         type = "lua";
         config = ''
-          require('nvim-treesitter.configs').setup {
+          require('nvim-treesitter.configs').setup({
             highlight = { enable = true},
             indent = { enable = true},
-          }
+          })
+        '';
+      }
+      {
+        plugin = indent-blankline-nvim;
+        type = "lua";
+        config = ''
+          require('ibl').setup({
+            indent = {
+              char = "┊",
+            },
+            scope = {
+              enabled = true,
+              show_start = true,
+              show_end = true,
+            },
+          })
+        '';
+      }
+      {
+        plugin = treesj;
+        type = "lua";
+        config = ''
+          require('treesj').setup{
+            lang = {
+              lua = require('treesj.langs.lua'),
+              typescript = require('treesj.langs.typescript'),
+              python = require('treesj.langs.python'),
+              },
+            use_default_keymaps = true,
+            check_syntax_error = true,
+            max_join_length = 120,
+            cursor_behavior = 'hold',
+            notify = true,
+            dot_repeat = true,
+            on_error = nil,
+            }
         '';
       }
     ];
