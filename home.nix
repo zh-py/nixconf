@@ -24,6 +24,7 @@ in {
   # environment.
   home.packages = with pkgs; [
     htop
+    du-dust
     ripgrep
     glances
     bottom
@@ -59,8 +60,14 @@ in {
 
     (python311.withPackages (p:
       with p; [
+        pip
         numpy
         requests
+        pandas
+        matplotlib
+        pytz
+        tenacity
+        timeout-decorator
         ipdb
         pudb
         pysnooper
@@ -165,12 +172,8 @@ in {
       let &scrolloff = 5
       let g:context_enabled = 0
       filetype plugin indent on
-      autocmd FileType python map <buffer> <F5> :w<CR>:exec 'term python3 %' shellescape(@%, 1)<CR>
-      autocmd FileType python imap <buffer> <F5> <esc>:w<CR>:exec 'term python3 %' shellescape(@%, 1)<CR>
       autocmd Filetype lua setlocal tabstop=4
       autocmd Filetype lua setlocal shiftwidth=4
-      au FileType python map <silent> <leader>b ofrom pudb import set_trace; set_trace()<esc>
-      au FileType python map <silent> <leader>B Ofrom pudb import set_trace; set_trace()<esc>
       cnoremap <C-a> <Home>
       cnoremap <C-e> <End>
       cnoremap <C-p> <Up>
@@ -196,6 +199,11 @@ in {
       context-vim
       vim-nix
       nerdcommenter
+      {
+        plugin = nvim-gdb;
+        type = "lua";
+        config = builtins.readFile(./neovim/nvimgdb.lua);
+      }
       #{
         #plugin = vimtex;
         #config = /* vim */ ''
@@ -256,6 +264,13 @@ in {
       friendly-snippets
       cmp-nvim-lsp
       {
+        plugin = nvim-surround;
+        type = "lua";
+        config = ''
+          require("nvim-surround").setup()
+        '';
+      }
+      {
         plugin = nvim-cmp;
         type = "lua";
         config = builtins.readFile(./neovim/completion.lua);
@@ -265,7 +280,6 @@ in {
         plugin = mini-nvim;
         type = "lua";
         config = ''
-          require('mini.surround').setup()
           require('mini.trailspace').setup()
         '';
       }
