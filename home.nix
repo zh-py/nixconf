@@ -69,10 +69,10 @@ in {
         tenacity
         timeout-decorator
         ipdb
-        pudb
         pysnooper
         pyside6
         debugpy
+        pytest
       ]))
   ];
   #pkgs.python311.withPackages
@@ -190,6 +190,10 @@ in {
       lua vim.keymap.set("n", "-", [[<cmd>vertical resize -5<cr>]])
       lua vim.keymap.set("n", "+", [[<cmd>horizontal resize +2<cr>]])
       lua vim.keymap.set("n", "_", [[<cmd>horizontal resize -2<cr>]])
+      autocmd Filetype python nnoremap <silent> <F5> :w<CR>:terminal python3 % -m pdb<CR>:startinsert<CR>
+      autocmd Filetype python map! <silent> <F5> <ESC> :w<CR>:terminal python3 % -m pdb<CR>:startinsert<CR>
+      au FileType python map <silent> <leader>b obreakpoint()<esc>
+      au FileType python map <silent> <leader>B Obreakpoint()<esc>
     '';
     plugins = with pkgs.vimPlugins; [
       vim-visual-multi
@@ -199,11 +203,6 @@ in {
       context-vim
       vim-nix
       nerdcommenter
-      {
-        plugin = nvim-gdb;
-        type = "lua";
-        config = builtins.readFile(./neovim/nvimgdb.lua);
-      }
       #{
         #plugin = vimtex;
         #config = /* vim */ ''
