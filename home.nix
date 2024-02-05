@@ -157,6 +157,7 @@ in {
     withPython3 = true;
     extraConfig = ''
       colorscheme gruvbox
+      filetype plugin indent on
       syntax enable
       set mouse=a
       set number
@@ -164,10 +165,7 @@ in {
       set linebreak
       set clipboard=unnamed
       set nu rnu
-      let g:context_nvim_no_redraw = 1
       let &scrolloff = 5
-      let g:context_enabled = 0
-      filetype plugin indent on
       nn <F7> :setlocal spell! spell?<CR>
       autocmd Filetype lua setlocal tabstop=4
       autocmd Filetype lua setlocal shiftwidth=4
@@ -187,40 +185,100 @@ in {
       lua vim.keymap.set("n", "-", [[<cmd>vertical resize -5<cr>]])
       lua vim.keymap.set("n", "+", [[<cmd>horizontal resize +2<cr>]])
       lua vim.keymap.set("n", "_", [[<cmd>horizontal resize -2<cr>]])
-      autocmd Filetype python nnoremap <silent> <F5> :w<CR>:terminal python3 % -m pdb<CR>:startinsert<CR>
+      autocmd Filetype python map <silent> <F5> :w<CR>:terminal python3 % -m pdb<CR>:startinsert<CR>
       autocmd Filetype python map! <silent> <F5> <ESC> :w<CR>:terminal python3 % -m pdb<CR>:startinsert<CR>
       autocmd FileType python map <silent> <leader>b obreakpoint()<esc>
       autocmd FileType python map <silent> <leader>B Oimport ipdb; ipdb.set_trace()<esc>
-      autocmd Filetype tex,latex nmap <F5> :w <Enter> <localleader>lk<localleader>ll
-      autocmd Filetype tex,latex imap <F5> <ESC> :w <Enter> <localleader>lk<localleader>ll
-      autocmd Filetype tex,latex nmap <F4> <localleader>le
-      autocmd Filetype tex,latex imap <F4> <ESC> <localleader>le
+      autocmd Filetype tex,latex map <F5> :w <Enter> <localleader>lk<localleader>ll
+      autocmd Filetype tex,latex map! <F5> <ESC> :w <Enter> <localleader>lk<localleader>ll
+      autocmd Filetype tex,latex map <F4> <localleader>le
+      autocmd Filetype tex,latex map! <F4> <ESC> <localleader>le
       autocmd Filetype tex,latex set shiftwidth=4
-      autocmd Filetype markdown nnoremap <silent> <F5> :w<CR>:MarkdownPreview<CR>
+      autocmd Filetype markdown map <silent> <F5> :w<CR>:MarkdownPreview<CR>
       autocmd Filetype markdown map! <silent> <F5> <ESC> :w<CR>:MarkdownPreview<CR>
+      map [b :bprevious<CR>
+      map ]b :bnext<CR>
+      map bq :Bdelete<CR>
+      lua vim.keymap.set("n", "H", [[<cmd>bprevious<cr>]])
+      lua vim.keymap.set("n", "L", [[<cmd>bnext<cr>]])
     '';
+      #let g:airline#extensions#tabline#enabled = 1
+      #let g:airline#extensions#tabline#switch_buffers_and_tabs = 0
+      #if !exists('g:airline_symbols')
+        #let g:airline_symbols = {}
+      #endif
+      #let g:airline_left_sep = ''
+      #let g:airline_left_alt_sep = ''
+      #let g:airline_right_sep = ''
+      #let g:airline_right_alt_sep = ''
+      #let g:airline_symbols.branch = ''
+      #let g:airline_symbols.colnr = ' ℅:'
+      #let g:airline_symbols.readonly = ''
+      #let g:airline_symbols.linenr = ' :'
+      #let g:airline_symbols.maxlinenr = '☰ '
+      #let g:airline_symbols.dirty='⚡'
     plugins = with pkgs.vimPlugins; [
       vim-visual-multi
       gruvbox
       trouble-nvim
       fzf-vim
-      context-vim
       vim-nix
       nerdcommenter
       markdown-preview-nvim
+      vim-bbye
+      #{
+        #plugin = zk-nvim;
+        #type = "lua";
+        #config = ''
+          #require("zk").setup({
+            #-- can be "telescope", "fzf", "fzf_lua" or "select" (`vim.ui.select`)
+            #-- it's recommended to use "telescope", "fzf" or "fzf_lua"
+            #picker = "telescope",
+            #lsp = {
+              #-- `config` is passed to `vim.lsp.start_client(config)`
+              #config = {
+                #cmd = { "zk", "lsp" },
+                #name = "zk",
+                #-- on_attach = ...
+                #-- etc, see `:h vim.lsp.start_client()`
+              #},
+              #-- automatically attach buffers in a zk notebook that match the given filetypes
+              #auto_attach = {
+                #enabled = true,
+                #filetypes = { "markdown" },
+              #},
+            #},
+          #})
+        #'';
+      #}
+      #vim-airline
+      #vim-airline-themes
+      #{
+        #plugin = nvim-treesitter.withAllGrammars;
+        #type = "lua";
+        #config = ''
+          #require('nvim-treesitter.configs').setup({
+            #highlight = {
+              #enable = true,
+              #--disable = { "latex" },
+            #},
+            #indent = { enable = true},
+          #})
+        #'';
+      #}
       {
-        plugin = nvim-treesitter.withAllGrammars;
+        plugin = lualine-nvim;
         type = "lua";
-        config = ''
-          require('nvim-treesitter.configs').setup({
-            highlight = {
-              enable = true,
-              --disable = { "latex" },
-            },
-            indent = { enable = true},
-          })
-        '';
+        config = builtins.readFile(./neovim/lualine.lua);
       }
+      #{
+        #plugin = bufferline-nvim;
+        #type = "lua";
+        #config = ''
+          #vim.opt.termguicolors = true
+          #require("bufferline").setup{}
+        #'';
+      #}
       {
         plugin = vimtex;
         config = /* vim */ ''
@@ -310,31 +368,6 @@ in {
               path_display={"shorten"} -- or "truncate, smart"
             }
           }
-        '';
-      }
-      {
-        plugin = lualine-nvim;
-        type = "lua";
-        config = ''
-          local function metals_status()
-            return vim.g["metals_status"] or ""
-          end
-          require('lualine').setup(
-            {
-              options = {
-                theme = 'everforest',
-                icon_enabled = true,
-              },
-              sections = {
-                lualine_a = { 'mode' },
-                lualine_b = { 'branch', 'diff' },
-                lualine_c = { 'filename', metals_status },
-                lualine_x = {'encoding', 'filetype'},
-                lualine_y = {'progress'},
-                lualine_z = {'location'},
-              }
-            }
-          )
         '';
       }
       {
