@@ -8,19 +8,34 @@ lspconfig.marksman.setup {
 	capabilities = lsp_capabilities,
 	on_attach = on_attach,
 }
+lspconfig.texlab.setup {
+	capabilities = lsp_capabilities,
+	on_attach = on_attach,
+}
+require('lspconfig').ruff_lsp.setup {
+	capabilities = lsp_capabilities,
+	on_attach = on_attach,
+	init_options = {
+		settings = {
+			-- Any extra CLI arguments for `ruff` go here.
+			args = {},
+		}
+	}
+}
 lspconfig.pyright.setup {
 	capabilities = lsp_capabilities,
-	on_attach = function ()
+	on_attach = function()
 		vim.keymap.set('n', '<F4>', function() require('dap').continue() end)
 		vim.keymap.set('n', '<F6>', function() require('dap').restart() end)
 		vim.keymap.set('n', '<F3>', function() require('dap').step_over() end)
 		vim.keymap.set('n', '<F1>', function() require('dap').step_into() end)
 		vim.keymap.set('n', '<F2>', function() require('dap').step_out() end)
 		vim.keymap.set('n', '<leader>s', function() require('dap').terminate() end)
-		vim.keymap.set('n', '<Leader>b', function() require('dap').toggle_breakpoint() end)
-		vim.keymap.set('n', '<Leader>B', function() require('dap').set_breakpoint(vim.fn.input('Breakpoint condition: ')) end)
+		vim.keymap.set('n', '<F8>', function() require('dap').toggle_breakpoint() end)
+		vim.keymap.set('n', '<F9>', function() require('dap').set_breakpoint(vim.fn.input('Breakpoint condition: ')) end)
 		vim.keymap.set('n', '<leader>dp', function() require("dap").pause() end)
-		vim.keymap.set('n', '<Leader>lp', function() require('dap').set_breakpoint(nil, nil, vim.fn.input('Log point message: ')) end)
+		vim.keymap.set('n', '<Leader>lp',
+			function() require('dap').set_breakpoint(nil, nil, vim.fn.input('Log point message: ')) end)
 		vim.keymap.set('n', '<leader>lb', function() require('dap').list_breakpoints() end)
 		vim.keymap.set('n', '<leader>cb', function() require('dap').clear_breakpoints() end)
 		vim.keymap.set('n', '<Leader>dr', function() require('dap').repl.toggle() end)
@@ -29,8 +44,16 @@ lspconfig.pyright.setup {
 		vim.keymap.set({ 'n', 'v' }, '<Leader>dh', function() require('dap.ui.widgets').hover() end)
 		vim.keymap.set({ 'n', 'v' }, '<Leader>dp', function() require('dap.ui.widgets').preview() end)
 		vim.keymap.set({ 'n', 'v' }, '<Leader>de', function() require('dapui').eval() end)
-		vim.keymap.set('n', '<Leader>df', function() local widgets = require('dap.ui.widgets') widgets.centered_float(widgets.frames) end)
-		vim.keymap.set('n', '<Leader>ds', function() local widgets = require('dap.ui.widgets') widgets.centered_float(widgets.scopes) end)
+		vim.keymap.set('n', '<Leader>df',
+			function()
+				local widgets = require('dap.ui.widgets')
+				widgets.centered_float(widgets.frames)
+			end)
+		vim.keymap.set('n', '<Leader>ds',
+			function()
+				local widgets = require('dap.ui.widgets')
+				widgets.centered_float(widgets.scopes)
+			end)
 	end,
 	settings = {
 		pyright = { autoImportCompletion = true, },
@@ -44,6 +67,7 @@ lspconfig.pyright.setup {
 		}
 	}
 }
+
 lspconfig.lua_ls.setup {
 	capabilities = lsp_capabilities,
 	on_attach = function(client)
@@ -66,7 +90,6 @@ lspconfig.lua_ls.setup {
 	},
 }
 
-
 -- Global mappings.
 -- See `:help vim.diagnostic.*` for documentation on any of the below functions
 vim.keymap.set('n', '<space>e', vim.diagnostic.open_float)
@@ -81,6 +104,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
 	callback = function(ev)
 		-- Enable completion triggered by <c-x><c-o>
 		vim.bo[ev.buf].omnifunc = 'v:lua.vim.lsp.omnifunc'
+
 		-- Buffer local mappings.
 		-- See `:help vim.lsp.*` for documentation on any of the below functions
 		local opts = { buffer = ev.buf }
@@ -91,18 +115,64 @@ vim.api.nvim_create_autocmd('LspAttach', {
 		vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, opts)
 		vim.keymap.set('n', '<space>wa', vim.lsp.buf.add_workspace_folder, opts)
 		vim.keymap.set('n', '<space>wr', vim.lsp.buf.remove_workspace_folder, opts)
-		vim.keymap.set('n', '<space>wl', function()
-			print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-		end, opts)
+		vim.keymap.set('n', '<space>wl', function() print(vim.inspect(vim.lsp.buf.list_workspace_folders())) end, opts)
 		vim.keymap.set('n', '<space>D', vim.lsp.buf.type_definition, opts)
 		vim.keymap.set('n', '<space>rn', vim.lsp.buf.rename, opts)
 		vim.keymap.set({ 'n', 'v' }, '<space>ca', vim.lsp.buf.code_action, opts)
+		vim.keymap.set('n', '<space>f', function() vim.lsp.buf.format { async = true } end, opts)
 		--vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
 		vim.keymap.set('n', 'gr', require('telescope.builtin').lsp_references, opts)
-		vim.keymap.set('n', '<leader>?', require('telescope.builtin').oldfiles,
-			{ desc = '[?] Find recently opened files' })
-		vim.keymap.set('n', '<space>f', function()
-			vim.lsp.buf.format { async = true }
-		end, opts)
 	end,
+})
+
+
+
+require('lspkind').init({
+	-- DEPRECATED (use mode instead): enables text annotations
+	--
+	-- default: true
+	-- with_text = true,
+
+	-- defines how annotations are shown
+	-- default: symbol
+	-- options: 'text', 'text_symbol', 'symbol_text', 'symbol'
+	mode = 'symbol_text',
+
+	-- default symbol map
+	-- can be either 'default' (requires nerd-fonts font) or
+	-- 'codicons' for codicon preset (requires vscode-codicons font)
+	--
+	-- default: 'default'
+	preset = 'codicons',
+
+	-- override preset symbols
+	--
+	-- default: {}
+	symbol_map = {
+		Text = "󰉿",
+		Method = "󰆧",
+		Function = "󰊕",
+		Constructor = "",
+		Field = "󰜢",
+		Variable = "󰀫",
+		Class = "󰠱",
+		Interface = "",
+		Module = "",
+		Property = "󰜢",
+		Unit = "󰑭",
+		Value = "󰎠",
+		Enum = "",
+		Keyword = "󰌋",
+		Snippet = "",
+		Color = "󰏘",
+		File = "󰈙",
+		Reference = "󰈇",
+		Folder = "󰉋",
+		EnumMember = "",
+		Constant = "󰏿",
+		Struct = "󰙅",
+		Event = "",
+		Operator = "󰆕",
+		TypeParameter = "",
+	},
 })

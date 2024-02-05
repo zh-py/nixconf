@@ -36,14 +36,14 @@ in {
     syncthing
     nil
     pyright
-    pylint
+    ruff
+    ruff-lsp
     luajitPackages.luacheck
-    isort
-    black
     lua-language-server
     marksman
     tree-sitter
     tree-sitter-grammars.tree-sitter-python
+    texlab
 
     # # It is sometimes useful to fine-tune packages, for example, by applying
     # # overrides. You can do that directly here, just don't forget the
@@ -72,14 +72,10 @@ in {
         pysnooper
         pyside6
         debugpy
-        pytest
+        python-lsp-server
+        pynvim
       ]))
   ];
-  #pkgs.python311.withPackages
-  #(p:
-  #with p; [
-  #numpy
-  #])
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
   # plain files is through 'home.file'.
   home.file = {
@@ -172,6 +168,7 @@ in {
       let &scrolloff = 5
       let g:context_enabled = 0
       filetype plugin indent on
+      nn <F7> :setlocal spell! spell?<CR>
       autocmd Filetype lua setlocal tabstop=4
       autocmd Filetype lua setlocal shiftwidth=4
       cnoremap <C-a> <Home>
@@ -192,8 +189,13 @@ in {
       lua vim.keymap.set("n", "_", [[<cmd>horizontal resize -2<cr>]])
       autocmd Filetype python nnoremap <silent> <F5> :w<CR>:terminal python3 % -m pdb<CR>:startinsert<CR>
       autocmd Filetype python map! <silent> <F5> <ESC> :w<CR>:terminal python3 % -m pdb<CR>:startinsert<CR>
-      au FileType python map <silent> <leader>b obreakpoint()<esc>
-      au FileType python map <silent> <leader>B Obreakpoint()<esc>
+      autocmd FileType python map <silent> <leader>b obreakpoint()<esc>
+      autocmd FileType python map <silent> <leader>B Oimport ipdb; ipdb.set_trace()<esc>
+      autocmd Filetype tex,latex nmap <F5> :w <Enter> <localleader>lk<localleader>ll
+      autocmd Filetype tex,latex imap <F5> <ESC> :w <Enter> <localleader>lk<localleader>ll
+      autocmd Filetype tex,latex nmap <F4> <localleader>le
+      autocmd Filetype tex,latex imap <F4> <ESC> <localleader>le
+      autocmd Filetype tex,latex set shiftwidth=4
     '';
     plugins = with pkgs.vimPlugins; [
       vim-visual-multi
@@ -203,19 +205,28 @@ in {
       context-vim
       vim-nix
       nerdcommenter
-      #{
-        #plugin = vimtex;
-        #config = /* vim */ ''
-          #let g:vimtex_mappings_enabled = 0
-          #let g:vimtex_imaps_enabled = 0
-          #let g:vimtex_view_method = 'zathura'
-          #let g:vimtex_compiler_latexmk = {'build_dir': '.tex'}
-          #nnoremap <localleader>f <plug>(vimtex-view)
-          #nnoremap <localleader>g <plug>(vimtex-compile)
-          #nnoremap <localleader>d <plug>(vimtex-env-delete)
-          #nnoremap <localleader>c <plug>(vimtex-env-change)
-        #'';
-      #}
+      {
+        plugin = nvim-treesitter.withAllGrammars;
+        type = "lua";
+        config = ''
+          require('nvim-treesitter.configs').setup({
+            highlight = {
+              enable = true,
+              --disable = { "latex" },
+            },
+            indent = { enable = true},
+          })
+        '';
+      }
+      {
+        plugin = vimtex;
+        config = /* vim */ ''
+          let g:vimtex_view_method='skim'
+          let g:vimtex_view_skim_activate=0
+          let g:vimtex_view_skim_reading_bar=1
+          let g:vimtex_syntax_enabled=0
+        '';
+      }
       markdown-preview-nvim
       {
         plugin = vim-markdown;
@@ -239,21 +250,6 @@ in {
         type = "lua";
         config = builtins.readFile(./neovim/lspconfig.lua);
       }
-      {
-        plugin = nvim-lint;
-        type = "lua";
-        config = ''
-          require('lint').linters_by_ft = {
-            python = {'pylint'},
-            lua = {'luacheck'},
-          }
-          vim.api.nvim_create_autocmd({ "BufWritePost" }, {
-            callback = function()
-              require("lint").try_lint()
-            end,
-          })
-        '';
-      }
       cmp-buffer
       cmp-path
       cmp-cmdline
@@ -262,6 +258,7 @@ in {
       vim-vsnip
       friendly-snippets
       cmp-nvim-lsp
+      lspkind-nvim
       {
         plugin = nvim-surround;
         type = "lua";
@@ -303,7 +300,13 @@ in {
           vim.keymap.set('n', '<leader>fg', builtin.live_grep, {})
           vim.keymap.set('n', '<leader>fb', builtin.buffers, {})
           vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
-          require("telescope").setup{}
+          vim.keymap.set('n', '<leader>fr', builtin.oldfiles, {})
+          vim.keymap.set('n', '<leader>fc', builtin.commands, {})
+          require('telescope').setup{
+            defaults = {
+              path_display={"shorten"} -- or "truncate, smart"
+            }
+          }
         '';
       }
       {
@@ -329,16 +332,6 @@ in {
               }
             }
           )
-        '';
-      }
-      {
-        plugin = nvim-treesitter.withAllGrammars;
-        type = "lua";
-        config = ''
-          require('nvim-treesitter.configs').setup({
-            highlight = { enable = true},
-            indent = { enable = true},
-          })
         '';
       }
       {
