@@ -12,6 +12,11 @@ lspconfig.texlab.setup {
 	capabilities = lsp_capabilities,
 	on_attach = on_attach,
 }
+--require('lspconfig').ds_pinyin_lsp.setup {
+	--init_options = {
+		--db_path = "~/Documents/dict.db3"
+	--}
+--}
 require('lspconfig').ruff_lsp.setup {
 	capabilities = lsp_capabilities,
 	on_attach = on_attach,

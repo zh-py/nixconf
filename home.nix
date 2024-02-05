@@ -196,6 +196,8 @@ in {
       autocmd Filetype tex,latex nmap <F4> <localleader>le
       autocmd Filetype tex,latex imap <F4> <ESC> <localleader>le
       autocmd Filetype tex,latex set shiftwidth=4
+      autocmd Filetype markdown nnoremap <silent> <F5> :w<CR>:MarkdownPreview<CR>
+      autocmd Filetype markdown map! <silent> <F5> <ESC> :w<CR>:MarkdownPreview<CR>
     '';
     plugins = with pkgs.vimPlugins; [
       vim-visual-multi
@@ -205,6 +207,7 @@ in {
       context-vim
       vim-nix
       nerdcommenter
+      markdown-preview-nvim
       {
         plugin = nvim-treesitter.withAllGrammars;
         type = "lua";
