@@ -25,6 +25,7 @@ in {
   home.packages = with pkgs; [
     htop
     du-dust
+    fd
     ripgrep
     glances
     bottom
