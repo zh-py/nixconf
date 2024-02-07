@@ -26,13 +26,14 @@ in {
     htop
     du-dust
     fd
+    jetbrains-mono
+    #maple-mono
     ripgrep
     glances
     bottom
     aria
     alacritty
     thefuck
-    nerdfonts
     rclone
     syncthing
     nil
@@ -75,6 +76,7 @@ in {
         debugpy
         python-lsp-server
         pynvim
+        send2trash
       ]))
   ];
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
@@ -430,15 +432,15 @@ in {
         #padding.x = 10;
         #padding.y = 10;
         dynamic_padding = true;
-        opacity = 0.95;
+        opacity = 0.96;
         decorations = "buttonless";
         startup_mode = "Maximized";
       };
       font = {
         size = 16.0;
-        normal.family = "FiraCode Nerd Font";
-        bold.family = "FiraCode Nerd Font";
-        italic.family = "FiraCode Nerd Font";
+        normal.family = "Jetbrains Mono";
+        bold.family = "Jetbrains Mono";
+        italic.family = "Jetbrains Mono";
       };
       cursor = {
         style.shape = "Beam";
