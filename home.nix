@@ -334,7 +334,7 @@ in {
       cmp-nvim-lua
       cmp-vsnip
       vim-vsnip
-      friendly-snippets
+      #friendly-snippets
       cmp-nvim-lsp
       lspkind-nvim
       {
