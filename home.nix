@@ -26,7 +26,7 @@ in {
     htop
     du-dust
     fd
-    jetbrains-mono
+    fzf
     #maple-mono
     ripgrep
     glances
@@ -224,7 +224,7 @@ in {
       vim-visual-multi
       gruvbox
       trouble-nvim
-      fzf-vim
+      fzf-lua
       vim-nix
       nerdcommenter
       markdown-preview-nvim
@@ -256,19 +256,33 @@ in {
       #}
       #vim-airline
       #vim-airline-themes
-      #{
-        #plugin = nvim-treesitter.withAllGrammars;
-        #type = "lua";
-        #config = ''
-          #require('nvim-treesitter.configs').setup({
-            #highlight = {
-              #enable = true,
-              #--disable = { "latex" },
-            #},
-            #indent = { enable = true},
-          #})
-        #'';
-      #}
+      {
+        plugin = nvim-treesitter.withAllGrammars;
+        type = "lua";
+        config = ''
+          require('nvim-treesitter.configs').setup({
+            highlight = {
+              enable = true,
+              --disable = { "latex" },
+            },
+            indent = { enable = true},
+          })
+        '';
+      }
+      nui-nvim
+      nvim-notify
+      {
+        plugin = noice-nvim;
+        type = "lua";
+        config = builtins.readFile(./neovim/noice.lua);
+      }
+      {
+        plugin = nvim-web-devicons;
+        type = "lua";
+        config = ''
+          require("nvim-web-devicons").setup()
+        '';
+      }
       {
         plugin = lualine-nvim;
         type = "lua";
@@ -347,13 +361,6 @@ in {
         plugin = harpoon2;
         type = "lua";
         config = builtins.readFile(./neovim/harpoon.lua);
-      }
-      {
-        plugin = nvim-web-devicons;
-        type = "lua";
-        config = ''
-          require("nvim-web-devicons").setup()
-        '';
       }
       {
         plugin = telescope-nvim;
@@ -438,9 +445,12 @@ in {
       };
       font = {
         size = 16.0;
-        normal.family = "Jetbrains Mono";
-        bold.family = "Jetbrains Mono";
-        italic.family = "Jetbrains Mono";
+        #normal.family = "Jetbrains Mono";
+        #bold.family = "Jetbrains Mono";
+        #italic.family = "Jetbrains Mono";
+        normal.family = "Hack Nerd Font Mono";
+        bold.family = "Hack Nerd Font Mono";
+        italic.family = "Hack Nerd Font Mono";
       };
       cursor = {
         style.shape = "Beam";
