@@ -269,13 +269,13 @@ in {
           })
         '';
       }
-      nui-nvim
-      nvim-notify
-      {
-        plugin = noice-nvim;
-        type = "lua";
-        config = builtins.readFile(./neovim/noice.lua);
-      }
+      #nui-nvim
+      #nvim-notify
+      #{
+        #plugin = noice-nvim;
+        #type = "lua";
+        #config = builtins.readFile(./neovim/noice.lua);
+      #}
       {
         plugin = nvim-web-devicons;
         type = "lua";

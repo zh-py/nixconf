@@ -12,13 +12,13 @@ require('lualine').setup(
 			lualine_x = { 'tabs' },
 			lualine_y = { 'progress' },
 			--lualine_z = {'encoding', 'filetype'},
-			lualine_z = {
-				{
-					require("noice").api.statusline.mode.get,
-					cond = require("noice").api.statusline.mode.has,
-					color = { fg = "#ff9e64" },
-				}
-			},
+			--lualine_z = {
+				--{
+					--require("noice").api.statusline.mode.get,
+					--cond = require("noice").api.statusline.mode.has,
+					--color = { fg = "#ff9e64" },
+				--}
+			--},
 		},
 		filetype_names = {
 			TelescopePrompt = 'Telescope',
