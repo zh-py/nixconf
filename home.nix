@@ -301,6 +301,11 @@ in {
         '';
       }
       {
+        plugin = nvim-tree-lua;
+        type = "lua";
+        config = builtins.readFile(./neovim/nvimtree.lua);
+      }
+      {
         plugin = lualine-nvim;
         type = "lua";
         config = builtins.readFile(./neovim/lualine.lua);
