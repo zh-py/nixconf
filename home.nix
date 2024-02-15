@@ -127,7 +127,7 @@ in {
     enable = true;
     userEmail = "pierrez1984@gmail.com";
     userName = "zh-py";
-    includes = [{ path = "$HOME/.config/home-manager/.gitconfig"; }];
+    includes = [{ path = "$HOME/.config/home-manager/gitconfig"; }];
   };
 
   programs.fzf = {
