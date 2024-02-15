@@ -35,7 +35,7 @@ in {
     alacritty
     thefuck
     rclone
-    syncthing
+    #syncthing
     nil
     pyright
     ruff
