@@ -26,7 +26,6 @@ in {
     htop
     du-dust
     fd
-    fzf
     ripgrep
     bat
     delta
@@ -128,7 +127,11 @@ in {
     enable = true;
     userEmail = "pierrez1984@gmail.com";
     userName = "zh-py";
-    includes = [{ path = "./config/gitconfig"; }];
+    includes = [{ path = "$HOME/.config/home-manager/.gitconfig"; }];
+  };
+
+  programs.fzf = {
+    enable = true;
   };
 
   programs.zsh = {
