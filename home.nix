@@ -300,11 +300,11 @@ in {
           require('fzf-lua').setup({'fzf-vim'})
         '';
       }
-      {
-        plugin = nvim-tree-lua;
-        type = "lua";
-        config = builtins.readFile(./neovim/nvimtree.lua);
-      }
+      #{
+        #plugin = nvim-tree-lua;
+        #type = "lua";
+        #config = builtins.readFile(./neovim/nvimtree.lua);
+      #}
       {
         plugin = lualine-nvim;
         type = "lua";
