@@ -296,7 +296,8 @@ in {
           -- require("fzf-lua").setup({})
           -- require('fzf-lua').setup({'fzf-native'})
           -- vim.keymap.set("n", "<c-P>", "<cmd>lua require('fzf-lua').files()<CR>", { silent = true })
-          require"fzf-lua".setup({"telescope",winopts={preview={default="bat"}}})
+          -- require"fzf-lua".setup({"telescope",winopts={preview={default="bat"}}})
+          require('fzf-lua').setup({'fzf-vim'})
         '';
       }
       {
