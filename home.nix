@@ -27,8 +27,10 @@ in {
     du-dust
     fd
     fzf
-    #maple-mono
     ripgrep
+    bat
+    delta
+    #maple-mono
     glances
     bottom
     aria
@@ -126,6 +128,7 @@ in {
     enable = true;
     userEmail = "pierrez1984@gmail.com";
     userName = "zh-py";
+    includes = [{ path = "./config/gitconfig"; }];
   };
 
   programs.zsh = {
@@ -224,7 +227,6 @@ in {
       vim-visual-multi
       gruvbox
       trouble-nvim
-      fzf-lua
       vim-nix
       nerdcommenter
       markdown-preview-nvim
@@ -281,6 +283,14 @@ in {
         type = "lua";
         config = ''
           require("nvim-web-devicons").setup()
+        '';
+      }
+      {
+        plugin = fzf-lua;
+        type = "lua";
+        config = ''
+          require("fzf-lua").setup({})
+          vim.keymap.set("n", "<c-P>", "<cmd>lua require('fzf-lua').files()<CR>", { silent = true })
         '';
       }
       {
