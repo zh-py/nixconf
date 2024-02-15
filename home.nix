@@ -293,7 +293,8 @@ in {
         plugin = fzf-lua;
         type = "lua";
         config = ''
-          require("fzf-lua").setup({})
+          -- require("fzf-lua").setup({})
+          require"fzf-lua".setup({"telescope",winopts={preview={default="bat"}}})
           vim.keymap.set("n", "<c-P>", "<cmd>lua require('fzf-lua').files()<CR>", { silent = true })
         '';
       }
