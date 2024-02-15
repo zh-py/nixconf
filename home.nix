@@ -127,7 +127,7 @@ in {
     enable = true;
     userEmail = "pierrez1984@gmail.com";
     userName = "zh-py";
-    includes = [{ path = "~/.config/home-manager/.gitconfig"; }];
+    includes = [{ path = "~/.config/home-manager/dotfiles/.gitconfig"; }];
   };
 
   programs.fzf = {
@@ -143,6 +143,7 @@ in {
       bl = "sudo python3 ~/Downloads/osx_battery_charge_limit/main.py -s 42";
       bh = "sudo python3 ~/Downloads/osx_battery_charge_limit/main.py -s 77";
     };
+    initExtra = builtins.readFile ./dotfiles/.zshrc;
     oh-my-zsh = {
       enable = true;
       theme = "robbyrussell";
