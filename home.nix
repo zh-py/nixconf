@@ -78,6 +78,7 @@ in {
         python-lsp-server
         pynvim
         send2trash
+        openpyxl
       ]))
   ];
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
@@ -387,21 +388,9 @@ in {
       {
         plugin = telescope-nvim;
         type = "lua";
-        config = ''
-          local builtin = require('telescope.builtin')
-          vim.keymap.set('n', '<leader>ff', builtin.find_files, {})
-          vim.keymap.set('n', '<leader>fg', builtin.live_grep, {})
-          vim.keymap.set('n', '<leader>fb', builtin.buffers, {})
-          vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
-          vim.keymap.set('n', '<leader>fr', builtin.oldfiles, {})
-          vim.keymap.set('n', '<leader>fc', builtin.commands, {})
-          require('telescope').setup{
-            defaults = {
-              path_display={"shorten"} -- or "truncate, smart"
-            }
-          }
-        '';
+        config = builtins.readFile(./neovim/telescope.lua);
       }
+      telescope-file-browser-nvim
       {
         plugin = indent-blankline-nvim;
         type = "lua";
