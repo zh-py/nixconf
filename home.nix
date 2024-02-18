@@ -65,6 +65,7 @@ in {
       with p; [
         pip
         numpy
+        sympy
         requests
         pandas
         matplotlib
@@ -72,8 +73,8 @@ in {
         tenacity
         timeout-decorator
         ipdb
+        ipython
         pysnooper
-        pyside6
         debugpy
         python-lsp-server
         pynvim
@@ -198,8 +199,8 @@ in {
       lua vim.keymap.set("n", "_", [[<cmd>horizontal resize -2<cr>]])
       autocmd Filetype python map <silent> <F5> :w<CR>:terminal python3 % -m pdb<CR>:startinsert<CR>
       autocmd Filetype python map! <silent> <F5> <ESC> :w<CR>:terminal python3 % -m pdb<CR>:startinsert<CR>
-      autocmd FileType python map <silent> <leader>b obreakpoint()<esc>
-      autocmd FileType python map <silent> <leader>B Oimport ipdb; ipdb.set_trace()<esc>
+      autocmd FileType python map <silent> <leader>b oimport ipdb; ipdb.set_trace()<esc>
+      autocmd FileType python map <silent> <leader>B obreakpoint()<esc>
       autocmd Filetype tex,latex map <F5> :w <Enter> <localleader>lk<localleader>ll
       autocmd Filetype tex,latex map! <F5> <ESC> :w <Enter> <localleader>lk<localleader>ll
       autocmd Filetype tex,latex map <F4> <localleader>le
