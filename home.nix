@@ -24,7 +24,6 @@ in {
   # environment.
   home.packages = with pkgs; [
     htop
-    wezterm
     du-dust
     fd
     ripgrep
@@ -97,7 +96,7 @@ in {
     #   org.gradle.daemon.idletimeout=3600000
     # '';
     #".config/mpv".source = dotfiles/mpv;
-    ".config/wezterm/wezterm.lua".source = dotfiles/wezterm.lua;
+    #".config/wezterm/wezterm.lua".source = dotfiles/wezterm.lua;
   };
 
   # Home Manager can also manage your environment variables through
