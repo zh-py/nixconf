@@ -24,16 +24,18 @@ in {
   # environment.
   home.packages = with pkgs; [
     htop
+    wezterm
+    mpv
     du-dust
     fd
     ripgrep
     bat
+    neofetch
     delta
     #maple-mono
     glances
     bottom
     aria
-    alacritty
     thefuck
     rclone
     #syncthing
@@ -95,6 +97,8 @@ in {
     #   org.gradle.console=verbose
     #   org.gradle.daemon.idletimeout=3600000
     # '';
+    ".config/mpv".source = dotfiles/mpv;
+    ".config/wezterm/wezterm.lua".source = dotfiles/wezterm.lua;
   };
 
   # Home Manager can also manage your environment variables through
@@ -113,7 +117,9 @@ in {
   #  /etc/profiles/per-user/py/etc/profile.d/hm-session-vars.sh
   #
   home.sessionVariables = {
-    # EDITOR = "vim";
+    EDITOR = "nvim";
+    BROWSER = "firefox";
+    TERMINAL = "alacritty";
     XDG_CONFIG_HOME = "$HOME/.config";
   };
 
@@ -129,7 +135,29 @@ in {
     enable = true;
     userEmail = "pierrez1984@gmail.com";
     userName = "zh-py";
-    includes = [{ path = "~/.config/home-manager/dotfiles/.gitconfig"; }];
+    #includes = [{ path = "~/.config/home-manager/dotfiles/.gitconfig"; }];
+    extraConfig = {
+      core = {
+        editor = "nvim";
+        pager = "delta --dark";
+        whitespace = "trailing-space,space-before-tab";
+      };
+      interactive = {
+        diffFilter = "delta --color-only";
+      };
+      delta = {
+        navigate = true;
+        light = false;
+        side-by-side = true;
+        line-numbers = true;
+      };
+      merge = {
+        conflictstyle = "diff3";
+      };
+      diff = {
+        colorMoved = "default";
+      };
+    };
   };
 
   programs.fzf = {
