@@ -25,7 +25,6 @@ in {
   home.packages = with pkgs; [
     htop
     wezterm
-    mpv
     du-dust
     fd
     ripgrep
@@ -97,7 +96,7 @@ in {
     #   org.gradle.console=verbose
     #   org.gradle.daemon.idletimeout=3600000
     # '';
-    ".config/mpv".source = dotfiles/mpv;
+    #".config/mpv".source = dotfiles/mpv;
     ".config/wezterm/wezterm.lua".source = dotfiles/wezterm.lua;
   };
 
