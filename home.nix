@@ -23,7 +23,11 @@ in {
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = with pkgs; [
+    tldr
+    eza
+    #powertop
     htop
+    nvd
     du-dust
     fd
     ripgrep
@@ -47,6 +51,8 @@ in {
     tree-sitter
     tree-sitter-grammars.tree-sitter-python
     texlab
+    rectangle
+    spotube
 
     # # It is sometimes useful to fine-tune packages, for example, by applying
     # # overrides. You can do that directly here, just don't forget the
@@ -164,7 +170,7 @@ in {
 
   programs.zsh = {
     enable = true;
-    enableAutosuggestions = true;
+    autosuggestion.enable = true;
     enableCompletion = true;
     shellAliases = {
       ll = "ls -l";
