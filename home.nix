@@ -53,6 +53,8 @@ in {
     texlab
     rectangle
     spotube
+    deluge
+    ffsubsync
 
     # # It is sometimes useful to fine-tune packages, for example, by applying
     # # overrides. You can do that directly here, just don't forget the
@@ -86,6 +88,7 @@ in {
         pynvim
         send2trash
         openpyxl
+        setuptools
       ]))
   ];
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
