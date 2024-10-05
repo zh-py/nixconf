@@ -1,5 +1,5 @@
 {
-  description = "my dotfiles";
+  description = "my manager";
 
   inputs = {
     # unstable has the 'freshest' packages you will find, even the AUR

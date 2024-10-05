@@ -18,13 +18,13 @@ in {
   # You should not change this value, even if you update Home Manager. If you do
   # want to update the value, then make sure to first check the Home Manager
   # release notes.
-  home.stateVersion = "23.11"; # Please read the comment before changing.
+  home.stateVersion = "24.11"; # Please read the comment before changing.
 
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = with pkgs; [
+    (nerdfonts.override { fonts = [ "NerdFontsSymbolsOnly" "Terminus" "FiraCode" "Iosevka" "JetBrainsMono" "Hack" ]; })
     tldr
-    eza
     #powertop
     htop
     nvd
@@ -33,6 +33,9 @@ in {
     ripgrep
     bat
     neofetch
+    #eza
+    lsof
+    #bandwhich
     delta
     #maple-mono
     glances
@@ -55,6 +58,7 @@ in {
     spotube
     deluge
     ffsubsync
+    zoom-us
 
     # # It is sometimes useful to fine-tune packages, for example, by applying
     # # overrides. You can do that directly here, just don't forget the
@@ -69,7 +73,7 @@ in {
     #   echo "Hello, ${config.home.username}!"
     # '')
 
-    (python311.withPackages (p:
+    (python312.withPackages (p:
       with p; [
         pip
         numpy
@@ -138,6 +142,45 @@ in {
     allowUnfreePredicate = _: true;
   };
 
+  programs.lf = {
+    enable = true;
+    settings = {
+      number = true;
+      relativenumber = true;
+      hidden = true;
+      icons = false;
+    };
+    keybindings = {
+      gh = "cd ~";
+      gd = "cd ~/Downloads";
+      gc = "cd ~/.config";
+      gn = "cd /etc/nixos/";
+      DD = "trash";
+      md = "mkdir";
+      i = "$less $f";
+      oo = "extractcode";
+      sp = "usage";
+      Q = "quit-and-cd";
+    };
+    extraConfig = ''
+      #!/bin/sh
+      #https://github.com/gokcehan/lf/wiki/Tips
+      cmd trash $IFS="$(printf '\n\t')"; trash $fx
+      cmd extractcode $IFS="$(printf '\n\t')"; extractcode $fx
+      cmd usage $du -h -d1 | less
+      cmd quit-and-cd &{{
+        pwd > $LF_CD_FILE
+        lf -remote "send $id quit"
+      }}
+      #cmd open &{{
+        #case $(file --mime-type -Lb $f) in
+          #text/*) lf -remote "send $id \$$EDITOR \$fx";;
+          #*) for f in $fx; do $OPENER $f > /dev/null 2> /dev/null & done;;
+        #esac
+      #}}
+    '';
+  };
+
   programs.git = {
     enable = true;
     userEmail = "pierrez1984@gmail.com";
@@ -180,7 +223,20 @@ in {
       bl = "sudo python3 ~/Downloads/osx_battery_charge_limit/main.py -s 42";
       bh = "sudo python3 ~/Downloads/osx_battery_charge_limit/main.py -s 77";
     };
+    plugins = [
+      {
+        name = "powerlevel10k";
+        src = pkgs.zsh-powerlevel10k;
+        file = "share/zsh-powerlevel10k/powerlevel10k.zsh-theme";
+      }
+      {
+        name = "powerlevel10k-config";
+        src = ./dotfiles/p10k-config;
+        file = ".p10k.zsh";
+      }
+    ];
     initExtra = builtins.readFile ./dotfiles/.zshrc;
+    #envExtra= builtins.readFile ./dotfiles/.zshenv;
     oh-my-zsh = {
       enable = true;
       theme = "robbyrussell";
@@ -476,6 +532,46 @@ in {
       nvim-dap-virtual-text
     ];
   };
+
+  #programs.kitty = {
+    #enable = true;
+    #shellIntegration.enableZshIntegration = true;
+    #font.name = "Terminus (TTF)";
+    #font.size = 12;
+    #theme = "Space Gray Eighties";
+    #extraConfig = ''
+      #shell_integration enabled
+      #shell zsh
+      #editor .
+      #tab_bar_edge top
+      #tab_bar_style powerline
+      #tab_switch_strategy right
+      ##tab_title_template " {index}: {f'{title[:6]}…{title[-6:]}' if title.rindex(title[-1]) + 1 > 13 else title.center(7)}"
+      ##tab_title_template "{index}: {title[title.rfind('/')+1:]}"
+      #tab_title_template " {index}: {f'…{title[-14:]}' if title.rindex(title[-1]) + 1 > 15 else title.center(10)}"
+      #active_tab_font_style bold
+      #tab_bar_margin_width 6
+      #tab_powerline_style round
+      #tab_separator " ┇"
+      #macos_option_as_alt yes
+      #map alt+1 goto_tab 1
+      #map alt+2 goto_tab 2
+      #map alt+3 goto_tab 3
+      #map alt+4 goto_tab 4
+      #map alt+5 goto_tab 5
+      #map alt+6 goto_tab 6
+      #map alt+7 goto_tab 7
+      #map alt+8 goto_tab 8
+      ##map alt+9 goto_tab 9
+      ##map ctrl+shift+t new_tab_with_cwd
+      ##map cmd+shift+h previous_tab
+      ##map cmd+shift+l next_tab
+      ###map cmd+c copy_to_clipboard
+      ##map ctrl+insert copy_and_clear_or_interrupt
+      ###map cmd+v paste_from_clipboard
+      ##map shift+insert paste_from_clipboard
+    ##'';
+  #};
 
   programs.alacritty = {
     enable = true;
