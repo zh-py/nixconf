@@ -45,6 +45,7 @@ in {
     rclone
     #syncthing
     nil
+    nixfmt-rfc-style
     pyright
     ruff
     ruff-lsp
@@ -55,7 +56,6 @@ in {
     tree-sitter-grammars.tree-sitter-python
     texlab
     rectangle
-    spotube
     deluge
     ffsubsync
     zoom-us
@@ -533,45 +533,46 @@ in {
     ];
   };
 
-  #programs.kitty = {
-    #enable = true;
-    #shellIntegration.enableZshIntegration = true;
-    #font.name = "Terminus (TTF)";
-    #font.size = 12;
-    #theme = "Space Gray Eighties";
-    #extraConfig = ''
-      #shell_integration enabled
-      #shell zsh
-      #editor .
-      #tab_bar_edge top
-      #tab_bar_style powerline
-      #tab_switch_strategy right
-      ##tab_title_template " {index}: {f'{title[:6]}…{title[-6:]}' if title.rindex(title[-1]) + 1 > 13 else title.center(7)}"
-      ##tab_title_template "{index}: {title[title.rfind('/')+1:]}"
-      #tab_title_template " {index}: {f'…{title[-14:]}' if title.rindex(title[-1]) + 1 > 15 else title.center(10)}"
-      #active_tab_font_style bold
-      #tab_bar_margin_width 6
-      #tab_powerline_style round
-      #tab_separator " ┇"
-      #macos_option_as_alt yes
-      #map alt+1 goto_tab 1
-      #map alt+2 goto_tab 2
-      #map alt+3 goto_tab 3
-      #map alt+4 goto_tab 4
-      #map alt+5 goto_tab 5
-      #map alt+6 goto_tab 6
-      #map alt+7 goto_tab 7
-      #map alt+8 goto_tab 8
-      ##map alt+9 goto_tab 9
-      ##map ctrl+shift+t new_tab_with_cwd
-      ##map cmd+shift+h previous_tab
-      ##map cmd+shift+l next_tab
-      ###map cmd+c copy_to_clipboard
-      ##map ctrl+insert copy_and_clear_or_interrupt
-      ###map cmd+v paste_from_clipboard
-      ##map shift+insert paste_from_clipboard
-    ##'';
-  #};
+  programs.kitty = {
+    enable = true;
+    shellIntegration.enableZshIntegration = true;
+    font.name = "JetBrainsMono Nerd Font";
+    font.size = 16;
+    themeFile= "SpaceGray_Eighties";
+    extraConfig = ''
+      hide_window_decorations yes #macos
+      shell_integration enabled
+      shell zsh
+      editor .
+      tab_bar_edge top
+      tab_bar_style powerline
+      tab_switch_strategy right
+      #tab_title_template " {index}: {f'{title[:6]}…{title[-6:]}' if title.rindex(title[-1]) + 1 > 13 else title.center(7)}"
+      #tab_title_template "{index}: {title[title.rfind('/')+1:]}"
+      tab_title_template " {index}: {f'…{title[-14:]}' if title.rindex(title[-1]) + 1 > 15 else title.center(10)}"
+      active_tab_font_style bold
+      tab_bar_margin_width 6
+      tab_powerline_style round
+      tab_separator " ┇"
+      macos_option_as_alt no #macos
+      map cmd+1 goto_tab 1
+      map cmd+2 goto_tab 2
+      map cmd+3 goto_tab 3
+      map cmd+4 goto_tab 4
+      map cmd+5 goto_tab 5
+      map cmd+6 goto_tab 6
+      map cmd+7 goto_tab 7
+      map cmd+8 goto_tab 8
+      map cmd+9 goto_tab 9
+      #map ctrl+shift+t new_tab_with_cwd
+      #map cmd+shift+h previous_tab
+      #map cmd+shift+l next_tab
+      ##map cmd+c copy_to_clipboard
+      #map ctrl+insert copy_and_clear_or_interrupt
+      ##map cmd+v paste_from_clipboard
+      #map shift+insert paste_from_clipboard
+    #'';
+  };
 
   programs.alacritty = {
     enable = true;
