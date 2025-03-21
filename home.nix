@@ -28,6 +28,7 @@ in {
     nerd-fonts.iosevka
     nerd-fonts.hack
 
+    #yabai
     texliveFull
     sagetex
     tldr
