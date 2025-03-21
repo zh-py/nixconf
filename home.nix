@@ -23,7 +23,13 @@ in {
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = with pkgs; [
-    (nerdfonts.override { fonts = [ "NerdFontsSymbolsOnly" "Terminus" "FiraCode" "Iosevka" "JetBrainsMono" "Hack" ]; })
+    nerd-fonts.fira-code
+    nerd-fonts.jetbrains-mono
+    nerd-fonts.iosevka
+    nerd-fonts.hack
+
+    texliveFull
+    sagetex
     tldr
     #powertop
     htop
@@ -59,6 +65,10 @@ in {
     deluge
     ffsubsync
     zoom-us
+    yt-dlp
+    #rustdesk
+    #pdfarranger
+
 
     # # It is sometimes useful to fine-tune packages, for example, by applying
     # # overrides. You can do that directly here, just don't forget the
@@ -73,11 +83,12 @@ in {
     #   echo "Hello, ${config.home.username}!"
     # '')
 
-    (python312.withPackages (p:
+    (python313.withPackages (p:
       with p; [
         pip
         numpy
         sympy
+        jupyter
         requests
         pandas
         matplotlib
@@ -86,7 +97,7 @@ in {
         timeout-decorator
         ipdb
         ipython
-        pysnooper
+        #pysnooper
         debugpy
         python-lsp-server
         pynvim
@@ -222,6 +233,11 @@ in {
       ll = "ls -l";
       bl = "sudo python3 ~/Downloads/osx_battery_charge_limit/main.py -s 42";
       bh = "sudo python3 ~/Downloads/osx_battery_charge_limit/main.py -s 77";
+      y7 = "(){ yt-dlp -f 137+140 --no-mtime $1. ;}";
+      y6 = "(){ yt-dlp -f 136+140 --no-mtime $1. ;}";
+      y67 = "(){ yt-dlp -f '137+140/136+140' --no-mtime $1. ;}";
+      yfm = "(){ yt-dlp --list-formats $1. ;}";
+      yf = "(){ yt-dlp --write-auto-sub --write-sub --sub-lang en --convert-subtitles srt -f '137+140/136+140/135+140/134+140/137+140-8/137+140-7/137+140-6/137+140-5/137+140-4/137+140-3/137+140-2/137+140-1/136+140-8/136+140-7/136+140-6/136+140-5/136+140-4/136+140-3/136+140-2/136+140-1' --no-mtime $1. ;}";
     };
     plugins = [
       {
@@ -270,6 +286,7 @@ in {
       set nu rnu
       let &scrolloff = 5
       nn <F7> :setlocal spell! spell?<CR>
+      nn <A-s> :setlocal spell! spell?<CR>
       autocmd Filetype lua setlocal tabstop=4
       autocmd Filetype lua setlocal shiftwidth=4
       cnoremap <C-a> <Home>
@@ -288,15 +305,23 @@ in {
       lua vim.keymap.set("n", "-", [[<cmd>vertical resize -5<cr>]])
       lua vim.keymap.set("n", "+", [[<cmd>horizontal resize +2<cr>]])
       lua vim.keymap.set("n", "_", [[<cmd>horizontal resize -2<cr>]])
+      autocmd Filetype python map <silent> <A-r> :w<CR>:terminal python3 % -m pdb<CR>:startinsert<CR>
+      autocmd Filetype python map! <silent> <A-r> <ESC> :w<CR>:terminal python3 % -m pdb<CR>:startinsert<CR>
       autocmd Filetype python map <silent> <F5> :w<CR>:terminal python3 % -m pdb<CR>:startinsert<CR>
       autocmd Filetype python map! <silent> <F5> <ESC> :w<CR>:terminal python3 % -m pdb<CR>:startinsert<CR>
       autocmd FileType python map <silent> <leader>b oimport ipdb; ipdb.set_trace()<esc>
       autocmd FileType python map <silent> <leader>B obreakpoint()<esc>
+      autocmd Filetype tex,latex map <A-r> :w <Enter> <localleader>lk<localleader>ll
+      autocmd Filetype tex,latex map! <A-r> <ESC> :w <Enter> <localleader>lk<localleader>ll
       autocmd Filetype tex,latex map <F5> :w <Enter> <localleader>lk<localleader>ll
       autocmd Filetype tex,latex map! <F5> <ESC> :w <Enter> <localleader>lk<localleader>ll
+      autocmd Filetype tex,latex map <A-e> <localleader>le
+      autocmd Filetype tex,latex map! <A-e> <ESC> <localleader>le
       autocmd Filetype tex,latex map <F4> <localleader>le
       autocmd Filetype tex,latex map! <F4> <ESC> <localleader>le
       autocmd Filetype tex,latex set shiftwidth=4
+      autocmd Filetype markdown map <silent> <A-r> :w<CR>:MarkdownPreview<CR>
+      autocmd Filetype markdown map! <silent> <A-r> <ESC> :w<CR>:MarkdownPreview<CR>
       autocmd Filetype markdown map <silent> <F5> :w<CR>:MarkdownPreview<CR>
       autocmd Filetype markdown map! <silent> <F5> <ESC> :w<CR>:MarkdownPreview<CR>
       map [b :bprevious<CR>
@@ -304,6 +329,22 @@ in {
       map qb :Bdelete<CR>
       lua vim.keymap.set("n", "H", [[<cmd>bprevious<cr>]])
       lua vim.keymap.set("n", "L", [[<cmd>bnext<cr>]])
+      if has("autocmd")
+        au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
+      endif
+      autocmd FileType css setlocal tabstop=2 shiftwidth=2
+      autocmd FileType haskell setlocal tabstop=2 shiftwidth=2
+      autocmd FileType nix setlocal tabstop=2 shiftwidth=2
+      autocmd FileType json setlocal tabstop=2 shiftwidth=2
+      autocmd FileType cpp setlocal tabstop=2 shiftwidth=2
+      autocmd FileType c setlocal tabstop=2 shiftwidth=2
+      autocmd FileType java setlocal tabstop=4 shiftwidth=4
+      autocmd FileType markdown setlocal spell
+      autocmd FileType markdown setlocal tabstop=2 shiftwidth=2
+      au BufRead,BufNewFile *.wiki setlocal textwidth=80 spell tabstop=2 shiftwidth=2
+      autocmd FileType xml setlocal tabstop=2 shiftwidth=2
+      autocmd FileType help wincmd L
+      autocmd FileType gitcommit setlocal spell
     '';
       #let g:airline#extensions#tabline#enabled = 1
       #let g:airline#extensions#tabline#switch_buffers_and_tabs = 0
@@ -564,6 +605,8 @@ in {
       map cmd+7 goto_tab 7
       map cmd+8 goto_tab 8
       map cmd+9 goto_tab 9
+      map cmd+t launch --cwd=current --type=tab
+      confirm_os_window_close 0
       #map ctrl+shift+t new_tab_with_cwd
       #map cmd+shift+h previous_tab
       #map cmd+shift+l next_tab
@@ -611,6 +654,14 @@ in {
           "-l"
         ];
       };
+      #terminal = {
+        #shell = {
+          #program = "zsh";
+          #args = [
+            #"-l"
+          #];
+        #};
+      #};
       colors = {
         primary = {
           background = "0x1b182c";

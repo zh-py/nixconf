@@ -59,16 +59,6 @@ lspconfig.pylsp.setup {
 	},
 }
 
-lspconfig.ruff_lsp.setup {
-	capabilities = lsp_capabilities,
-	on_attach = on_attach,
-	init_options = {
-		settings = {
-			-- Any extra CLI arguments for `ruff` go here.
-			args = {},
-		},
-	},
-}
 lspconfig.pyright.setup {
 	capabilities = lsp_capabilities,
 	on_attach = function()
