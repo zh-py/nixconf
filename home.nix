@@ -154,7 +154,7 @@ in {
     allowUnfreePredicate = _: true;
   };
 
-  services.mpris-proxy.enable = true;
+  #services.mpris-proxy.enable = true;
   programs.mpv = {
     # mkdir /var/log/mpv && sudo chmod -R u=rwx,g=rwx,o=rwx /var/log/mpv    ### for recent.lua history.log
     enable = true;
@@ -162,12 +162,12 @@ in {
       pkgs.mpv-unwrapped.wrapper {
         scripts = with pkgs.mpvScripts; [
           #uosc
+          #mpris
           sponsorblock
-          mpris
           thumbfast
         ];
         mpv = pkgs.mpv-unwrapped.override {
-          waylandSupport = true;
+          #waylandSupport = true;
           ffmpeg = pkgs.ffmpeg-full;
         };
       }
