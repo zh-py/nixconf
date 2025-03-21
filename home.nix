@@ -41,6 +41,7 @@ in {
     neofetch
     #eza
     lsof
+    eza
     #bandwhich
     delta
     #maple-mono
@@ -119,7 +120,7 @@ in {
     #   org.gradle.console=verbose
     #   org.gradle.daemon.idletimeout=3600000
     # '';
-    #".config/mpv".source = dotfiles/mpv;
+    ".config/mpv".source = dotfiles/mpv;
     #".config/wezterm/wezterm.lua".source = dotfiles/wezterm.lua;
   };
 
@@ -151,6 +152,26 @@ in {
   nixpkgs.config = {
     allowUnfree = true;
     allowUnfreePredicate = _: true;
+  };
+
+  services.mpris-proxy.enable = true;
+  programs.mpv = {
+    # mkdir /var/log/mpv && sudo chmod -R u=rwx,g=rwx,o=rwx /var/log/mpv    ### for recent.lua history.log
+    enable = true;
+    package = (
+      pkgs.mpv-unwrapped.wrapper {
+        scripts = with pkgs.mpvScripts; [
+          #uosc
+          sponsorblock
+          mpris
+          thumbfast
+        ];
+        mpv = pkgs.mpv-unwrapped.override {
+          waylandSupport = true;
+          ffmpeg = pkgs.ffmpeg-full;
+        };
+      }
+    );
   };
 
   programs.lf = {
